@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Submit School Review - School Review Manager</title>
+</head>
+
+<body class="bg-gray-800 text-gray-100 min-h-screen flex flex-col">
+    <header class="bg-gray-900 py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-400">School Review Manager</h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="text-gray-400 hover:text-white transition duration-300">Submit Review</a></li>
+                    <li><a href="/reviews" class="text-gray-400 hover:text-white transition duration-300">View Reviews</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="bg-gray-700 p-8 rounded-lg shadow-xl w-full max-w-lg">
+            <h2 class="text-3xl font-semibold text-center mb-6 text-blue-300">Submit Your School Review</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="mb-6">
+                    {% for category, message in messages %}
+                        <li class="p-3 rounded-md text-sm font-medium {% if category == 'success' %}bg-green-500 text-white{% elif category == 'danger' %}bg-red-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('submit_review') }}" method="POST" class="space-y-4">
+                <div>
+                    <label for="school_name" class="block text-gray-300 text-sm font-bold mb-2">School Name:</label>
+                    <input type="text" id="school_name" name="school_name" required
+                           class="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 bg-gray-600 text-gray-100 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-400"
+                           placeholder="e.g., Central High School"
+                           value="{{ form_data.school_name if form_data else '' }}">
+                </div>
+
+                <div>
+                    <label for="reviewer_name" class="block text-gray-300 text-sm font-bold mb-2">Your Name (Optional):</label>
+                    <input type="text" id="reviewer_name" name="reviewer_name"
+                           class="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 bg-gray-600 text-gray-100 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-400"
+                           placeholder="e.g., John Doe"
+                           value="{{ form_data.reviewer_name if form_data else '' }}">
+                </div>
+
+                <div>
+                    <label for="rating" class="block text-gray-300 text-sm font-bold mb-2">Rating (1-5 Stars):</label>
+                    <select id="rating" name="rating" required
+                            class="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 bg-gray-600 text-gray-100 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-400">
+                        <option value="" class="text-gray-400">Select a rating</option>
+                        <option value="5" {% if form_data and form_data.rating == '5' %}selected{% endif %}>⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                        <option value="4" {% if form_data and form_data.rating == '4' %}selected{% endif %}>⭐⭐⭐⭐ 4 - Very Good</option>
+                        <option value="3" {% if form_data and form_data.rating == '3' %}selected{% endif %}>⭐⭐⭐ 3 - Good</option>
+                        <option value="2" {% if form_data and form_data.rating == '2' %}selected{% endif %}>⭐⭐ 2 - Fair</option>
+                        <option value="1" {% if form_data and form_data.rating == '1' %}selected{% endif %}>⭐ 1 - Poor</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="comment" class="block text-gray-300 text-sm font-bold mb-2">Your Review:</label>
+                    <textarea id="comment" name="comment" rows="6" required
+                              class="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 bg-gray-600 text-gray-100 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-400"
+                              placeholder="Share your detailed thoughts about the school...">{{ form_data.comment if form_data else '' }}</textarea>
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 py-4 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 School Review Manager. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

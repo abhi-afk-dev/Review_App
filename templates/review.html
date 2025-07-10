@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>All School Reviews - School Review Manager</title>
+</head>
+
+<body class="bg-gray-800 text-gray-100 min-h-screen flex flex-col">
+    <header class="bg-gray-900 py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-400">School Review Manager</h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="text-gray-400 hover:text-white transition duration-300">Submit Review</a></li>
+                    <li><a href="/reviews" class="text-gray-400 hover:text-white transition duration-300">View Reviews</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow p-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-semibold text-center mb-8 text-blue-300">All School Reviews</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="mb-6">
+                    {% for category, message in messages %}
+                        <li class="p-3 rounded-md text-sm font-medium {% if category == 'success' %}bg-green-500 text-white{% elif category == 'danger' %}bg-red-500 text-white{% else %}bg-blue-500 text-white{% endif %}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% if reviews %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for review in reviews %}
+                        <div class="bg-gray-700 p-6 rounded-lg shadow-md flex flex-col">
+                            <h3 class="text-xl font-bold text-blue-200 mb-2">{{ review.school_name }}</h3>
+                            <div class="flex items-center text-yellow-400 mb-2">
+                                {% for _ in range(review.rating) %}
+                                    <span>&#9733;</span> 
+                                {% endfor %}
+                                {% for _ in range(5 - review.rating) %}
+                                    <span class="text-gray-500">&#9733;</span>
+                                {% endfor %}
+                                <span class="ml-2 text-gray-300">({{ review.rating }}/5)</span>
+                            </div>
+                            <p class="text-gray-300 mb-4 flex-grow">{{ review.comment }}</p>
+                            <div class="text-sm text-gray-400 mt-auto pt-2 border-t border-gray-600">
+                                <p><strong>Reviewer:</strong> {{ review.reviewer_name if review.reviewer_name else 'Anonymous' }}</p>
+                                <p>Submitted on: {{ review.submission_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-gray-400 text-lg">No reviews yet. Be the first to <a href="{{ url_for('index') }}" class="text-blue-400 hover:underline">submit a review</a>!</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 py-4 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 School Review Manager. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
